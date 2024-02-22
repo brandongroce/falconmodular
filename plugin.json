@@ -1,0 +1,23 @@
+{
+  "slug": "Falcon",
+  "name": "Falcon",
+  "version": "2.0.0",
+  "license": "MIT",
+  "brand": "Falcon",
+  "author": "brandon@groce.dev",
+  "authorEmail": "brandon@groce.dev",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "ClockSpacer",
+      "name": "ClockSpacer",
+      "description": "",
+      "tags": []
+    }
+  ]
+}
