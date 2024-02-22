@@ -5,6 +5,7 @@ struct ClockSpacer : Module {
 	enum ParamId {
 		BPM_PARAM,
 		DIVISOR_PARAM,
+		ONSWITCH_PARAM,
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -44,7 +45,7 @@ struct ClockSpacer : Module {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
         configParam(BPM_PARAM, 30.f, 300.f, 120.f, "BPM");
         configParam(DIVISOR_PARAM, 0.f, 2.f, 1.f, "Master Divisor");
-		configSwitch(QUALITY_PARAM, 0.f, 1.f, 1.f, "Quality", {"Off", "On"});
+		configSwitch(ONSWITCH_PARAM, 0.f, 1.f, 1.f, "Quality", {"Off", "On"});
 		configInput(RESET_INPUT, "Reset");
 		configOutput(MASTER_OUTPUT, "Master Clock");
 		configOutput(OUT1_OUTPUT, "-1");
