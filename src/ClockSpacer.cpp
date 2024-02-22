@@ -5,6 +5,7 @@ struct ClockSpacer : Module {
 	enum ParamId {
 		BPM_PARAM,
 		DIVISOR_PARAM,
+		ONSWITCH_PARAM,
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -44,7 +45,7 @@ struct ClockSpacer : Module {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
         configParam(BPM_PARAM, 30.f, 300.f, 120.f, "BPM");
         configParam(DIVISOR_PARAM, 0.f, 2.f, 1.f, "Master Divisor");
-		configSwitch(QUALITY_PARAM, 0.f, 1.f, 1.f, "Quality", {"Off", "On"});
+		configSwitch(ONSWITCH_PARAM, 0.f, 1.f, 1.f, "Quality", {"Off", "On"});
 		configInput(RESET_INPUT, "Reset");
 		configOutput(MASTER_OUTPUT, "Master Clock");
 		configOutput(OUT1_OUTPUT, "-1");
@@ -61,63 +62,64 @@ struct ClockSpacer : Module {
 		bpm = params[BPM_PARAM].getValue();
         masterDiv = params[DIVISOR_PARAM].getValue();
 
-        if (inputs[RESET_INPUT].getVoltage() >= 1.f) {
-            phase = 0.f;
-			phase1 = 0.f;
-			phase2 = 0.f;
-			phase3 = 0.f;
-			phase4 = 0.f;
-			phase5 = 0.f;
-			phase6 = 0.f;
-			phase7 = 0.f;
-			phase8 = 0.f;
+		if(params[ONSWITCH_PARAM].getValue() > 0.f) {
+			if (inputs[RESET_INPUT].getVoltage() >= 1.f) {
+				phase = 0.f;
+				phase1 = 0.f;
+				phase2 = 0.f;
+				phase3 = 0.f;
+				phase4 = 0.f;
+				phase5 = 0.f;
+				phase6 = 0.f;
+				phase7 = 0.f;
+				phase8 = 0.f;
 
-        }
+			}
 
-		float minute = 60.0;
+			float minute = 60.0;
 
-        float deltaPhase = (bpm / minute) * args.sampleTime;
-		float deltaPhase1 = ((bpm - masterDiv) / minute) * args.sampleTime;
-		float deltaPhase2 = ((bpm - (masterDiv * 2)) / minute) * args.sampleTime;
-		float deltaPhase3 = ((bpm - (masterDiv * 3)) / minute) * args.sampleTime;
-		float deltaPhase4 = ((bpm - (masterDiv * 4)) / minute) * args.sampleTime;
-		float deltaPhase5 = ((bpm - (masterDiv * 5)) / minute) * args.sampleTime;
-		float deltaPhase6 = ((bpm - (masterDiv * 6)) / minute) * args.sampleTime;
-		float deltaPhase7 = ((bpm - (masterDiv * 7)) / minute) * args.sampleTime;
-		float deltaPhase8 = ((bpm - (masterDiv * 8)) / minute) * args.sampleTime;
+			float deltaPhase = (bpm / minute) * args.sampleTime;
+			float deltaPhase1 = ((bpm - masterDiv) / minute) * args.sampleTime;
+			float deltaPhase2 = ((bpm - (masterDiv * 2)) / minute) * args.sampleTime;
+			float deltaPhase3 = ((bpm - (masterDiv * 3)) / minute) * args.sampleTime;
+			float deltaPhase4 = ((bpm - (masterDiv * 4)) / minute) * args.sampleTime;
+			float deltaPhase5 = ((bpm - (masterDiv * 5)) / minute) * args.sampleTime;
+			float deltaPhase6 = ((bpm - (masterDiv * 6)) / minute) * args.sampleTime;
+			float deltaPhase7 = ((bpm - (masterDiv * 7)) / minute) * args.sampleTime;
+			float deltaPhase8 = ((bpm - (masterDiv * 8)) / minute) * args.sampleTime;
 
-        phase += deltaPhase;
-		phase1 += deltaPhase1;
-		phase2 += deltaPhase2;
-		phase3 += deltaPhase3;
-		phase4 += deltaPhase4;
-		phase5 += deltaPhase5;
-		phase6 += deltaPhase6;
-		phase7 += deltaPhase7;
-		phase8 += deltaPhase8;
+			phase += deltaPhase;
+			phase1 += deltaPhase1;
+			phase2 += deltaPhase2;
+			phase3 += deltaPhase3;
+			phase4 += deltaPhase4;
+			phase5 += deltaPhase5;
+			phase6 += deltaPhase6;
+			phase7 += deltaPhase7;
+			phase8 += deltaPhase8;
 
-		if (phase >= 1.f) phase -= 1.f;
-		if (phase1 >= 1.f) phase1 -= 1.f;
-		if (phase2 >= 1.f) phase2 -= 1.f;
-		if (phase3 >= 1.f) phase3 -= 1.f;
-		if (phase4 >= 1.f) phase4 -= 1.f;
-		if (phase5 >= 1.f) phase5 -= 1.f;
-		if (phase6 >= 1.f) phase6 -= 1.f;
-		if (phase7 >= 1.f) phase7 -= 1.f;
-		if (phase8 >= 1.f) phase8 -= 1.f;
+			if (phase >= 1.f) phase -= 1.f;
+			if (phase1 >= 1.f) phase1 -= 1.f;
+			if (phase2 >= 1.f) phase2 -= 1.f;
+			if (phase3 >= 1.f) phase3 -= 1.f;
+			if (phase4 >= 1.f) phase4 -= 1.f;
+			if (phase5 >= 1.f) phase5 -= 1.f;
+			if (phase6 >= 1.f) phase6 -= 1.f;
+			if (phase7 >= 1.f) phase7 -= 1.f;
+			if (phase8 >= 1.f) phase8 -= 1.f;
 
-		float gateLength = 0.5;
+			float gateLength = 0.5;
 
-        outputs[MASTER_OUTPUT].setVoltage((phase < gateLength) ? 10.f : 0.f);
-		outputs[OUT1_OUTPUT].setVoltage((phase1 < gateLength) ? 10.f : 0.f);
-		outputs[OUT2_OUTPUT].setVoltage((phase2 < gateLength) ? 10.f : 0.f);
-		outputs[OUT3_OUTPUT].setVoltage((phase3 < gateLength) ? 10.f : 0.f);
-		outputs[OUT4_OUTPUT].setVoltage((phase4 < gateLength) ? 10.f : 0.f);
-		outputs[OUT5_OUTPUT].setVoltage((phase5 < gateLength) ? 10.f : 0.f);
-		outputs[OUT6_OUTPUT].setVoltage((phase6 < gateLength) ? 10.f : 0.f);
-		outputs[OUT7_OUTPUT].setVoltage((phase7 < gateLength) ? 10.f : 0.f);
-		outputs[OUT8_OUTPUT].setVoltage((phase8 < gateLength) ? 10.f : 0.f);
-
+			outputs[MASTER_OUTPUT].setVoltage((phase < gateLength) ? 10.f : 0.f);
+			outputs[OUT1_OUTPUT].setVoltage((phase1 < gateLength) ? 10.f : 0.f);
+			outputs[OUT2_OUTPUT].setVoltage((phase2 < gateLength) ? 10.f : 0.f);
+			outputs[OUT3_OUTPUT].setVoltage((phase3 < gateLength) ? 10.f : 0.f);
+			outputs[OUT4_OUTPUT].setVoltage((phase4 < gateLength) ? 10.f : 0.f);
+			outputs[OUT5_OUTPUT].setVoltage((phase5 < gateLength) ? 10.f : 0.f);
+			outputs[OUT6_OUTPUT].setVoltage((phase6 < gateLength) ? 10.f : 0.f);
+			outputs[OUT7_OUTPUT].setVoltage((phase7 < gateLength) ? 10.f : 0.f);
+			outputs[OUT8_OUTPUT].setVoltage((phase8 < gateLength) ? 10.f : 0.f);
+		}
 	}
 };
 
@@ -134,6 +136,8 @@ struct ClockSpacerWidget : ModuleWidget {
 
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(15.24, 21.619)), module, ClockSpacer::BPM_PARAM));
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(15.24, 33.541)), module, ClockSpacer::DIVISOR_PARAM));
+		addParam(createParamCentered<rack::componentlibrary::BefacoSwitch>(mm2px(Vec(24.697, 39.502)), module, ClockSpacer::ONSWITCH_PARAM));
+
 
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(15.24, 46.063)), module, ClockSpacer::RESET_INPUT));
 
